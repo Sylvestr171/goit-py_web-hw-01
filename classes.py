@@ -40,9 +40,9 @@ class Phone(Field):
     
     def __repr__(self) -> str:
         return f"{self}"
-    
-class Birthday(Field):
 
+#Клас поле для зберігання дати народження   
+class Birthday(Field):
     def __init__(self, value :str) -> None:
         try:
             # datetime.strptime(value, "%d.%m.%Y")
@@ -57,30 +57,35 @@ class Record:
         self.name = Name(name)
         self.phones = []
         self.birthday = None
-   
+    
+    #функція додавання номеру телефону
     def add_phone(self, phone :str) -> None:
         if Phone(phone) not in self.phones:
             self.phones.append(Phone(phone))
         else:
             raise CastomError (f'{phone} is already present in the notebook for {self.name}')
-
+    
+    #функція видалення номеру телефону
     def remove_phone(self, phone :str) -> None:
         if Phone(phone) in self.phones:
             self.phones.remove(Phone(phone))
         else:
             raise CastomError (f'{phone} відсутній в {self.name}')
 
+    #функція режагування номеру телефону
     def edit_phone(self, old_phone :str, new_phone :str) -> None:
         if not self.find_phone(old_phone):
             raise CastomError('Is not such number for contact')
         self.add_phone(new_phone)
         self.remove_phone(old_phone)
     
+    #функція пошуку номеру телефону
     def find_phone(self, phone_for_search :str) -> Union[Phone, None]: 
         for item in self.phones:
             if item == Phone(phone_for_search):
                 return item
     
+    #функція додавання дня народження
     def add_birthday(self, b_date :str) -> Birthday:
         self.birthday = Birthday(b_date)
         return self.birthday
@@ -100,14 +105,17 @@ class Record:
 #Клас для зберігання та управління записами.
 class AddressBook(UserDict):
 
+    #функція додавання запису до адресної книги
     def add_record(self, value :Record) -> None:
         key = value.name.value
         value = value
         self.data[key] = value
-
+    
+    #функція пошуку по адресній книзі
     def find(self, search_value :str) -> Union[Record, None]:
         return self.data.get(search_value, None)
     
+    #функція видалення запису в адресній книзі
     def delete(self, delete_value :str) -> None:
         if delete_value in self.data.keys():
             del self.data[delete_value]
@@ -118,20 +126,17 @@ class AddressBook(UserDict):
         if days_ahead <= 0:
             days_ahead += 7
         return start_date + timedelta(days=days_ahead)
-    
-    
+        
     def adjust_for_weekend(self, birthday :date) -> date:
         if birthday.weekday() >= 5:
             return self.find_next_weekday(birthday, 0)
         return birthday
 
-    # def get_upcoming_birthdays(self, users, days=7):
     def get_upcoming_birthdays(self, days :int =7) -> list[dict]:
         upcoming_birthdays = []
         today = date.today()
 
         for key, value in self.data.items():
-            
             
             if value.birthday:
                 date_format_date=datetime.strptime(value.birthday.value, "%d.%m.%Y").date()
