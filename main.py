@@ -1,8 +1,8 @@
 from random import choice
 from pathlib import Path
-from classes import AddressBook, CastomError, Record, Birthday
+from classes import AddressBook, CastomError, Record, Birthday, SaveData
 from typing import Callable, Any, Union
-from pickle import dump, load
+
 
 #Декоратор для обробки помилок
 def input_error(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -115,21 +115,12 @@ def birthdays(book: AddressBook) -> str:
         return f'No birthdays for display'
     
 
-def save_data(book :AddressBook, filename :str ="addressbook.pkl") -> None:
-    with open(filename, "wb") as f:
-        dump(book, f)
-
-def load_data(filename  :str  ="addressbook.pkl") -> AddressBook:
-    try:
-        with open(filename, "rb") as f:
-            return load(f)
-    except FileNotFoundError:
-        return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
 
 
 def main() -> Union[str, None]:
     # book = AddressBook()
-    book = load_data()
+    saver = SaveData()
+    book = saver.load_data()
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
@@ -174,7 +165,7 @@ def main() -> Union[str, None]:
         except TypeError:
             print (f"Invalid command.\nFor help enter: ?, help")
 
-    save_data(book)
+    saver.save_data(book)
 
 if __name__ == "__main__":
     main()
