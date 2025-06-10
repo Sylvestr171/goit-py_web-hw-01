@@ -35,7 +35,8 @@ class Phone(Field):
     
     def __repr__(self) -> str:
         return f"{self}"
-    
+
+#Клас поле для зберігання дати народження    
 class Birthday(Field):
     def __init__(self, value :str) -> None:
         try:
