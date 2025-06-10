@@ -1,12 +1,7 @@
 from collections import UserDict
 from datetime import datetime, date, timedelta
 from typing import Any, Union
-
-#клас для кастомних помилок
-class CastomError(Exception):
-    def __init__(self, message :str ="Custom Error") -> None:
-        self.message = message
-        super().__init__(self.message)
+from pickle import dump, load
 
 # Базовий клас для полів запису.
 class Field:
@@ -42,7 +37,6 @@ class Phone(Field):
         return f"{self}"
     
 class Birthday(Field):
-
     def __init__(self, value :str) -> None:
         try:
             # datetime.strptime(value, "%d.%m.%Y")
@@ -154,6 +148,26 @@ class AddressBook(UserDict):
         for name, record in self.data.items():
             result.append(f"Address book {name}:\n {record}")
         return "\n".join(result)
+
+#клас для кастомних помилок
+class CastomError(Exception):
+    def __init__(self, message :str ="Custom Error") -> None:
+        self.message = message
+        super().__init__(self.message)
+
+#клас для виконання серіалізації
+class SaveData:
+
+    def save_data(self, book :AddressBook, filename :str ="addressbook.pkl") -> None:
+        with open(filename, "wb") as f:
+            dump(book, f)
+
+    def load_data(self, filename  :str  ="addressbook.pkl") -> AddressBook:
+        try:
+            with open(filename, "rb") as f:
+                return load(f)
+        except FileNotFoundError:
+            return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
 
 def main():
     # Створення нової адресної книги
