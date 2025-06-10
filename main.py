@@ -114,22 +114,6 @@ def birthdays(book: AddressBook) -> str:
     else: 
         return f'No birthdays for display'
     
-<<<<<<< HEAD
-
-=======
-#функція серіалізації в файл
-def save_data(book :AddressBook, filename :str ="addressbook.pkl") -> None:
-    with open(filename, "wb") as f:
-        dump(book, f)
-
-#функція десеріалізації
-def load_data(filename  :str  ="addressbook.pkl") -> AddressBook:
-    try:
-        with open(filename, "rb") as f:
-            return load(f)
-    except FileNotFoundError:
-        return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
->>>>>>> 1ec20562279ae8a0e74da252f2c83ed04f9dbb1e
 
 
 def main() -> Union[str, None]:
