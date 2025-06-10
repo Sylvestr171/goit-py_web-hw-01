@@ -24,7 +24,7 @@ def parse_input(user_input:str) -> tuple[str,*tuple[str,...]]:
     cmd = cmd.strip().lower()
     return cmd, *args
 
-#Функція отриманн контакту Команда: "add John 1234567890"
+#Функція лолавання контакту Команда: "add John 1234567890"
 @input_error
 def add_contact(args:list[str], contacts:AddressBook) -> str:
     try:
@@ -56,7 +56,7 @@ def change_contact(args:list[str], book:AddressBook) -> str:
         massage = 'Contact updated.'
     return massage
 
-#Функція показати контакти Команда: "phone John"
+#Функція показати контакт Команда: "phone John"
 def show_phone(args:list[str], contacts:AddressBook) -> str:
     name = args[0].lower().capitalize()
     return contacts.get(name, 'The name is missing')
@@ -74,7 +74,7 @@ def get_random_phrase() -> str:
             phrase = file.readlines()
             return choice(phrase).strip()
 
-#функція для додавання дати народження
+#функція для додавання дати народження. Команда add-birthday <name> <DD.MM.YYYY>
 @input_error
 def add_birthday(args: list[str], book: AddressBook) -> str:
     try:
@@ -92,7 +92,7 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
         record.add_birthday(birthday)
     return message
 
-#функція для виводу дати народження для вказаного контакту
+#функція для виводу дати народження для вказаного контакту. Команда show-birthday <name>
 @input_error
 def show_birthday(args: list[str], book: AddressBook) -> Birthday:
     name = args[0].lower().capitalize()
@@ -105,7 +105,7 @@ def show_birthday(args: list[str], book: AddressBook) -> Birthday:
     else:
         raise CastomError("Контакт відсутній")
 
-#функціядля виводу дати привітання працівників на найближчий тиждень
+#функціядля виводу дати привітання працівників на найближчий тиждень. Команда birthdays
 @input_error
 def birthdays(book: AddressBook) -> str:
     results=book.get_upcoming_birthdays()
@@ -114,7 +114,22 @@ def birthdays(book: AddressBook) -> str:
     else: 
         return f'No birthdays for display'
     
+<<<<<<< HEAD
 
+=======
+#функція серіалізації в файл
+def save_data(book :AddressBook, filename :str ="addressbook.pkl") -> None:
+    with open(filename, "wb") as f:
+        dump(book, f)
+
+#функція десеріалізації
+def load_data(filename  :str  ="addressbook.pkl") -> AddressBook:
+    try:
+        with open(filename, "rb") as f:
+            return load(f)
+    except FileNotFoundError:
+        return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
+>>>>>>> 1ec20562279ae8a0e74da252f2c83ed04f9dbb1e
 
 
 def main() -> Union[str, None]:
@@ -169,7 +184,3 @@ def main() -> Union[str, None]:
 
 if __name__ == "__main__":
     main()
-
-
-#  Будь-яка команда, яка не відповідає вищезазначеним форматам, буде вважатися нами невірною, і бот буде виводити повідомлення "Invalid command."
-     
