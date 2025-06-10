@@ -4,23 +4,24 @@ from classes import AddressBook, CastomError, Record, Birthday, SaveData
 from typing import Callable, Any, Union
 from abc import ABC, abstractmethod
 
-#Abstract base class of the user interface
+
+# Abstract base class of the user interface
 class UserInterface(ABC):
 
     @abstractmethod
-    def add_contact(self, args:list[str], contacts:AddressBook) -> str:
+    def add_contact(self, args: list[str], contacts: AddressBook) -> str:
         pass
 
     @abstractmethod
-    def change_contact(self, args:list[str], book:AddressBook) -> str:
+    def change_contact(self, args: list[str], book: AddressBook) -> str:
         pass
 
     @abstractmethod
-    def show_phone(self, args:list[str], contacts:AddressBook) -> str:
+    def show_phone(self, args: list[str], contacts: AddressBook) -> str:
         pass
 
     @abstractmethod
-    def show_all(self, book:AddressBook) -> str:
+    def show_all(self, book: AddressBook) -> str:
         pass
 
     @abstractmethod
@@ -39,7 +40,8 @@ class UserInterface(ABC):
     def show_help(self) -> str:
         pass
 
-#Decorator for handling errors
+
+# Decorator for handling errors
 def input_error(func: Callable[..., Any]) -> Callable[..., Any]:
     def inner(*args: Any, **kwargs: Any):
         try:
@@ -50,14 +52,17 @@ def input_error(func: Callable[..., Any]) -> Callable[..., Any]:
             return "How can I help you?"
         except CastomError as e:
             return e
+
     return inner
 
-#The function of parsing a user-entered string into a command and its arguments. 
+
+# The function of parsing a user-entered string into a command and its arguments.
 @input_error
-def parse_input(user_input:str) -> tuple[str,*tuple[str,...]]:
+def parse_input(user_input: str) -> tuple[str, *tuple[str, ...]]:
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     return cmd, *args
+
 
 # #Функція лолавання контакту Команда: "add John 1234567890"
 # @input_error
@@ -86,7 +91,7 @@ def parse_input(user_input:str) -> tuple[str,*tuple[str,...]]:
 #         return f'"Uncnown command\nchange <name> <old_phone_namer> <new_phone_namer>" - change the phone number in the address book'
 #     if name.lower().capitalize() not in book.keys():
 #         massage = 'Contact is missing, please add it (add <name> <phone_namer>)! '
-#     else: 
+#     else:
 #         book[name.lower().capitalize()].edit_phone(old_phone, new_phone)
 #         massage = 'Contact updated.'
 #     return massage
@@ -101,13 +106,15 @@ def parse_input(user_input:str) -> tuple[str,*tuple[str,...]]:
 
 #     return '\n'.join(f"{key} => {value}" for key, value in book.items())
 
-#Function for select a random phrase to answer hello
+
+# Function for select a random phrase to answer hello
 @input_error
 def get_random_phrase() -> str:
-        current_dir = Path(__file__).parent
-        with open(current_dir / "hello.txt", "r", encoding="utf-8") as file:
-            phrase = file.readlines()
-            return choice(phrase).strip()
+    current_dir = Path(__file__).parent
+    with open(current_dir / "hello.txt", "r", encoding="utf-8") as file:
+        phrase = file.readlines()
+        return choice(phrase).strip()
+
 
 # #функція для додавання дати народження. Команда add-birthday <name> <DD.MM.YYYY>
 # @input_error
@@ -146,9 +153,9 @@ def get_random_phrase() -> str:
 #     results=book.get_upcoming_birthdays()
 #     if results:
 #         return str(results)
-#     else: 
+#     else:
 #         return f'No birthdays for display'
-    
+
 # def show_help() -> str:
 #     help_message="""The bot helps to work with the contact book.
 #                             Commands and functions:
@@ -164,16 +171,17 @@ def get_random_phrase() -> str:
 #                             "help" | "?" - show this help"""
 #     return help_message
 
-#Implementation of the console interface
+
+# Implementation of the console interface
 class ConsoleInterface(UserInterface):
-    #The function of adding a contact. Command: "add John 1234567890"
+    # The function of adding a contact. Command: "add John 1234567890"
     @input_error
-    def add_contact(self, args:list[str], contacts:AddressBook) -> str:
+    def add_contact(self, args: list[str], contacts: AddressBook) -> str:
         try:
             name, phone, *_ = args
         except ValueError:
             return f"Give me correct name and phone please."
-        name=name.lower().capitalize()
+        name = name.lower().capitalize()
         record = contacts.find(name)
         message = "Contact updated."
         if record is None:
@@ -184,38 +192,38 @@ class ConsoleInterface(UserInterface):
             record.add_phone(phone)
         return message
 
-    #Change contact function. Command: "change John 0987654321"
+    # Change contact function. Command: "change John 0987654321"
     @input_error
-    def change_contact(self, args:list[str], book:AddressBook) -> str:
+    def change_contact(self, args: list[str], book: AddressBook) -> str:
         try:
             name, old_phone, new_phone = args
         except ValueError:
             return f'"Uncnown command\nchange <name> <old_phone_namer> <new_phone_namer>" - change the phone number in the address book'
         if name.lower().capitalize() not in book.keys():
-            massage = 'Contact is missing, please add it (add <name> <phone_namer>)! '
-        else: 
+            massage = "Contact is missing, please add it (add <name> <phone_namer>)! "
+        else:
             book[name.lower().capitalize()].edit_phone(old_phone, new_phone)
-            massage = 'Contact updated.'
+            massage = "Contact updated."
         return massage
-    
-    #Show contact function. Command: "phone John"
-    def show_phone(self, args:list[str], contacts:AddressBook) -> str:
-        name = args[0].lower().capitalize()
-        return contacts.get(name, 'The name is missing')
-    
-    #Function to display the entire address book. Command: "all"
-    def show_all(self, book:AddressBook) -> str:
 
-        return '\n'.join(f"{key} => {value}" for key, value in book.items())
-    
-    #Function to add date of birth. Command: "add-birthday <name> <DD.MM.YYYY>""
+    # Show contact function. Command: "phone John"
+    def show_phone(self, args: list[str], contacts: AddressBook) -> str:
+        name = args[0].lower().capitalize()
+        return contacts.get(name, "The name is missing")
+
+    # Function to display the entire address book. Command: "all"
+    def show_all(self, book: AddressBook) -> str:
+
+        return "\n".join(f"{key} => {value}" for key, value in book.items())
+
+    # Function to add date of birth. Command: "add-birthday <name> <DD.MM.YYYY>""
     @input_error
     def add_birthday(self, args: list[str], book: AddressBook) -> str:
         try:
             name, birthday, *_ = args
         except ValueError:
             return f"Give me name and birthday."
-        name=name.lower().capitalize()
+        name = name.lower().capitalize()
         record = book.find(name)
         message = "Contact updated."
         if record is None:
@@ -225,12 +233,12 @@ class ConsoleInterface(UserInterface):
         if birthday:
             record.add_birthday(birthday)
         return message
-    
-    #Function to display the date of birth for the specified contact. Command: show-birthday <name>
+
+    # Function to display the date of birth for the specified contact. Command: show-birthday <name>
     @input_error
     def show_birthday(self, args: list[str], book: AddressBook) -> Birthday:
         name = args[0].lower().capitalize()
-        result=book.get(name, None)
+        result = book.get(name, None)
         if result != None:
             if result.birthday != None:
                 return result.birthday
@@ -239,18 +247,18 @@ class ConsoleInterface(UserInterface):
         else:
             raise CastomError("Контакт відсутній")
 
-    #Function for displaying the date of employee congratulations for the next week. Command: birthdays
+    # Function for displaying the date of employee congratulations for the next week. Command: birthdays
     @input_error
     def birthdays(self, book: AddressBook) -> str:
-        results=book.get_upcoming_birthdays()
+        results = book.get_upcoming_birthdays()
         if results:
             return str(results)
-        else: 
-            return f'No birthdays for display'
+        else:
+            return f"No birthdays for display"
 
-    #Help display function
+    # Help display function
     def show_help(self) -> str:
-        help_message="""The bot helps to work with the contact book.
+        help_message = """The bot helps to work with the contact book.
                                 Commands and functions:
                                 "close" | "exit" - exit the program
                                 "hello" - display a greeting
@@ -263,6 +271,7 @@ class ConsoleInterface(UserInterface):
                                 "birthdays" - show date for congratulation
                                 "help" | "?" - show this help"""
         return help_message
+
 
 def main() -> Union[str, None]:
     # book = AddressBook()
@@ -278,7 +287,7 @@ def main() -> Union[str, None]:
                 case "close" | "exit" | "quit":
                     print("Good bye!")
                     break
-                
+
                 case "hello":
                     print(get_random_phrase())
                 case "add":
@@ -296,13 +305,14 @@ def main() -> Union[str, None]:
                 case "birthdays":
                     print(console_interface.birthdays(book))
                 case "help" | "?":
-                    print(console_interface.show_help())             
+                    print(console_interface.show_help())
                 case _:
                     print("Invalid command.\nFor help enter: ?, help")
         except TypeError:
-            print (f"Invalid command.\nFor help enter: ?, help")
+            print(f"Invalid command.\nFor help enter: ?, help")
 
     saver.save_data(book)
+
 
 if __name__ == "__main__":
     main()
