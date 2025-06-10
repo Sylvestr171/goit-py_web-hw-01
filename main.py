@@ -4,7 +4,7 @@ from classes import AddressBook, CastomError, Record, Birthday, SaveData
 from typing import Callable, Any, Union, List, Dict
 from abc import ABC, abstractmethod
 
-#Абстрактний базовий клас інтерфейсу користувача
+#Abstract base class of the user interface
 class UserInterface(ABC):
 
     @abstractmethod
@@ -39,7 +39,7 @@ class UserInterface(ABC):
     def show_help(self) -> str:
         pass
 
-#Декоратор для обробки помилок
+#Decorator for handling errors
 def input_error(func: Callable[..., Any]) -> Callable[..., Any]:
     def inner(*args: Any, **kwargs: Any):
         try:
@@ -52,7 +52,7 @@ def input_error(func: Callable[..., Any]) -> Callable[..., Any]:
             return e
     return inner
 
-#Функція розбору введеного користувачем рядку на команду та її аргументи. 
+#The function of parsing a user-entered string into a command and its arguments. 
 @input_error
 def parse_input(user_input:str) -> tuple[str,*tuple[str,...]]:
     cmd, *args = user_input.split()
@@ -101,7 +101,7 @@ def parse_input(user_input:str) -> tuple[str,*tuple[str,...]]:
 
 #     return '\n'.join(f"{key} => {value}" for key, value in book.items())
 
-#функція для вибору рандомної фрази для відповіді на hello
+#Function for select a random phrase to answer hello
 @input_error
 def get_random_phrase() -> str:
         current_dir = Path(__file__).parent
@@ -164,8 +164,9 @@ def get_random_phrase() -> str:
 #                             "help" | "?" - show this help"""
 #     return help_message
 
+#Implementation of the console interface
 class ConsoleInterface(UserInterface):
-    #Функція лолавання контакту Команда: "add John 1234567890"
+    #The function of adding a contact. Command: "add John 1234567890"
     @input_error
     def add_contact(self, args:list[str], contacts:AddressBook) -> str:
         try:
@@ -183,7 +184,7 @@ class ConsoleInterface(UserInterface):
             record.add_phone(phone)
         return message
 
-    #Функція зміни контакту  Команда: "change John 0987654321"
+    #Change contact function. Command: "change John 0987654321"
     @input_error
     def change_contact(self, args:list[str], book:AddressBook) -> str:
         try:
@@ -197,17 +198,17 @@ class ConsoleInterface(UserInterface):
             massage = 'Contact updated.'
         return massage
     
-    #Функція показати контакт Команда: "phone John"
+    #Show contact function. Command: "phone John"
     def show_phone(self, args:list[str], contacts:AddressBook) -> str:
         name = args[0].lower().capitalize()
         return contacts.get(name, 'The name is missing')
     
-    #Функція виведення всієї адресної книги Команда: "all"
+    #Function to display the entire address book. Command: "all"
     def show_all(self, book:AddressBook) -> str:
 
         return '\n'.join(f"{key} => {value}" for key, value in book.items())
     
-    #функція для додавання дати народження. Команда add-birthday <name> <DD.MM.YYYY>
+    #Function to add date of birth. Command: "add-birthday <name> <DD.MM.YYYY>""
     @input_error
     def add_birthday(self, args: list[str], book: AddressBook) -> str:
         try:
@@ -225,7 +226,7 @@ class ConsoleInterface(UserInterface):
             record.add_birthday(birthday)
         return message
     
-    #функція для виводу дати народження для вказаного контакту. Команда show-birthday <name>
+    #Function to display the date of birth for the specified contact. Command: show-birthday <name>
     @input_error
     def show_birthday(self, args: list[str], book: AddressBook) -> Birthday:
         name = args[0].lower().capitalize()
@@ -238,7 +239,7 @@ class ConsoleInterface(UserInterface):
         else:
             raise CastomError("Контакт відсутній")
 
-    #функціядля виводу дати привітання працівників на найближчий тиждень. Команда birthdays
+    #Function for displaying the date of employee congratulations for the next week. Command: birthdays
     @input_error
     def birthdays(self, book: AddressBook) -> str:
         results=book.get_upcoming_birthdays()
@@ -247,6 +248,7 @@ class ConsoleInterface(UserInterface):
         else: 
             return f'No birthdays for display'
 
+    #Help display function
     def show_help(self) -> str:
         help_message="""The bot helps to work with the contact book.
                                 Commands and functions:
