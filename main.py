@@ -1,7 +1,7 @@
 from random import choice
 from pathlib import Path
 from classes import AddressBook, CastomError, Record, Birthday, SaveData
-from typing import Callable, Any, Union, List, Dict
+from typing import Callable, Any, Union
 from abc import ABC, abstractmethod
 
 #Abstract base class of the user interface
